@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import { onMounted} from "vue";
+import loginService from "@/services/login-service";
+
+onMounted(async () => {
+  await loginService.requestLogin();
+});
+
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <h1>Logging in ....</h1>
 </template>

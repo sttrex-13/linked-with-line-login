@@ -19,7 +19,7 @@ func main() {
 	defer cancel()
 
 	// handler
-	lineHandler := line.LINEHandler{}
+	lineHandler := line.NewLINEHandler()
 
 	r := mux.NewRouter()
 	r.Use(CORS)
