@@ -7,28 +7,43 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 const (
-	AppURL string = "https://polished-pheasant-explicitly.ngrok-free.app"
-
 	LINERequestAccessApiURL string = "https://access.line.me/oauth2/v2.1/authorize"
 	LINEMessagingApiURL     string = "https://api.line.me/v2/bot/message"
 	LINEOauthApiURL         string = "https://api.line.me/oauth2/v2.1"
 	LINEAccountApiURL       string = "https://api.line.me/v2/"
-
-	ClientID           string = "2005138101" // LINE Login's Channel ID
-	ChannelAccessToken string = "fEd+xwkjCLrKX0Y3kY6i3J1HXpPrv3MN825KF95ES6R1AvARfom5LY2FhgsdkXGpleUzR07LVM8rqMihUK4RVAexkD2hyp0aQ33fDhvTxM0qbQ/0Hw/qwtyO9EOeio0yUHKhKhNs8Ik9TQyeGbZ3JAdB04t89/1O/w1cDnyilFU="
-	ChanelSecret       string = "e6f25e7be49afa72300489c4a8241347"
 )
 
 type LINEClientInterface interface {
+	RequestAuthenticationCode() (url string)
 	GetAccessToken(authenticationCode string) (resp GetAccessTokenResponse, err error)
 	GetProfile(accessToken string) (resp GetProfileResponse, err error)
 	PushTextMessage(userId string, message string) (err error)
 }
 
 type LINEClient struct {
+	AppURL                   string
+	LINELoginClientID        string
+	LINELoginChanelSecret    string
+	LINEMessagingAccessToken string
+}
+
+func (c *LINEClient) RequestAuthenticationCode() string {
+	queryParams := "?response_type=code"
+	queryParams += "&client_id=" + c.LINELoginClientID
+	// Redirect URL: URL-encoded callback URL
+	queryParams += "&redirect_uri=" + url.QueryEscape(c.AppURL+"/api/line/login-callback")
+	// State: A unique alphanumeric string
+	queryParams += "&state=" + uuid.New().String()
+	// Scope: Permissions requested from the user see https://developers.line.biz/en/docs/line-login/integrate-line-login/#scopes
+	queryParams += "&scope=profile"
+
+	requestURL := LINERequestAccessApiURL + queryParams
+	return requestURL
 }
 
 func (c *LINEClient) PushTextMessage(userId string, message string) (err error) {
@@ -52,7 +67,7 @@ func (c *LINEClient) PushTextMessage(userId string, message string) (err error) 
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+ChannelAccessToken)
+	req.Header.Set("Authorization", "Bearer "+c.LINEMessagingAccessToken)
 
 	client := &http.Client{}
 	_, err = client.Do(req)
@@ -78,9 +93,9 @@ func (c *LINEClient) GetAccessToken(authenticationCode string) (resp GetAccessTo
 		requestBody = url.Values{
 			"grant_type":    {"authorization_code"},
 			"code":          {authenticationCode},
-			"redirect_uri":  {AppURL + "/api/line/login-callback"},
-			"client_id":     {ClientID},
-			"client_secret": {ChanelSecret},
+			"redirect_uri":  {c.AppURL + "/api/line/login-callback"},
+			"client_id":     {c.LINELoginClientID},
+			"client_secret": {c.LINELoginChanelSecret},
 		}
 		encodedRequestBody = requestBody.Encode()
 	)
