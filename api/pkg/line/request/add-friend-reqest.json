@@ -1,0 +1,18 @@
+{
+  "destination": "U36a5db39d990efffe2ce5b42a73742eb",
+  "events": [
+    {
+      "deliveryContext": { "isRedelivery": false },
+      "follow": { "isUnblocked": false },
+      "mode": "active",
+      "replyToken": "9192f87f84c14f05b1d4b15d17ee7beb",
+      "source": {
+        "type": "user",
+        "userId": "Uff7256c030bb932f13b50d257fe2d24f"
+      },
+      "timestamp": 1716003444853,
+      "type": "follow",
+      "webhookEventId": "01HY4WD6FAYT2GBJ7X2SRDWDQ6"
+    }
+  ]
+}
