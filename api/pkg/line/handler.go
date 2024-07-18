@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"encoding/json"
 )
 
 type LINEHandler struct {
@@ -67,5 +68,20 @@ func (h *LINEHandler) LoginCallback(w http.ResponseWriter, r *http.Request) {
 func (h *LINEHandler) RequestLogin(w http.ResponseWriter, r *http.Request) {
 	requestURL := h.lineClient.RequestAuthenticationCode()
 
-	http.Redirect(w, r, requestURL, http.StatusSeeOther)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"requestURL":requestURL})
+}
+
+func (h *LINEHandler) Prelogin(w http.ResponseWriter, r *http.Request) {
+	redirectURL, queryParams := h.lineClient.GetRedirectInit()
+	
+	// Return queryParams in the response payload
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"queryParams": queryParams,"redirectURL":redirectURL})
+
+	// w.Header().Set("X-Query-Params", queryParams)
+
+	// Perform the redirect
+	// http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }

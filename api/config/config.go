@@ -7,7 +7,7 @@ import (
 
 type Configuration struct {
 	// change to your url
-	AppURL string `env:"APP_URL" default:"https://polished-pheasant-explicitly.ngrok-free.app"`
+	AppURL string `env:"APP_URL" default:"https://positive-muskrat-emerging.ngrok-free.app"`
 	// line login credentials
 	LINELoginClientID     string `env:"LINE_LOGIN_CLIENT_ID" default:"2005138101"`
 	LINELoginChanelSecret string `env:"LINE_LOGIN_CHANEL_SECRET" default:"e6f25e7be49afa72300489c4a8241347"`

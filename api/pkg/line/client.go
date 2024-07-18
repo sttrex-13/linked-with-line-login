@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
+	"fmt"
 	"github.com/google/uuid"
 )
 
@@ -23,6 +23,8 @@ type LINEClientInterface interface {
 	GetAccessToken(authenticationCode string) (resp GetAccessTokenResponse, err error)
 	GetProfile(accessToken string) (resp GetProfileResponse, err error)
 	PushTextMessage(userId string, message string) (err error)
+	GetRedirectInit()(url string,query_params string)
+
 }
 
 type LINEClient struct {
@@ -166,4 +168,11 @@ func (c *LINEClient) GetProfile(accessToken string) (resp GetProfileResponse, er
 	}
 
 	return resp, nil
+}
+
+func (c *LINEClient) GetRedirectInit() (string, string) {
+	state := "state=" + uuid.New().String()
+	queryParams := fmt.Sprintf("?response_type=code&%s", state)
+	redirectURL := fmt.Sprintf("/api/line/request-login%s",queryParams)
+	return redirectURL, state
 }

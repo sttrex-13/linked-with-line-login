@@ -1,4 +1,4 @@
 run:
 	docker compose up --build
 hosting:
-	ngrok http --domain=polished-pheasant-explicitly.ngrok-free.app 8080
+	ngrok http --domain=positive-muskrat-emerging.ngrok-free.app 8080

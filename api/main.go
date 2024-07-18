@@ -31,6 +31,7 @@ func main() {
 
 	linerouter := r.PathPrefix("/line").Subrouter()
 	linerouter.HandleFunc("/webhook", lineHandler.WebHook).Methods(http.MethodPost)
+	linerouter.HandleFunc("/init", lineHandler.Prelogin).Methods(http.MethodGet)
 	linerouter.HandleFunc("/request-login", lineHandler.RequestLogin).Methods(http.MethodGet)
 	linerouter.HandleFunc("/login-callback", lineHandler.LoginCallback).Methods(http.MethodGet)
 
